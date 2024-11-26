@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Search with Checkboxes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .column {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 250px;
+        }
+
+        .column h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .column input,
+        .column textarea,
+        .column button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .column button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .column button:hover {
+            background-color: #45a049;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            accent-color: #4CAF50;
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+        }
+
+        .checkbox-container label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #clear-btn {
+            background-color: #f44336;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        #clear-btn:hover {
+            background-color: #e60000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Column for inputting data -->
+    <div class="column" id="input-column">
+        <h3>Data Input</h3>
+        <textarea id="data-input" placeholder="Enter data separated by commas or newlines" rows="5" onkeydown="checkEnter(event)"></textarea>
+        <button onclick="addData()">Add Data</button>
+    </div>
+
+    <!-- Column for searching data -->
+    <div class="column" id="search-column">
+        <h3>Search Data</h3>
+        <input type="text" id="search-input" placeholder="Search" onkeydown="checkEnter(event)">
+        <button onclick="searchData()">Search</button>
+    </div>
+
+    <!-- Column for showing inputs with checkboxes -->
+    <div class="column" id="result-column">
+        <h3>Inputs</h3>
+        <div id="checkbox-list"></div>
+    </div>
+</div>
+
+<!-- Clear button centered below the columns -->
+<div style="text-align: center;">
+    <button id="clear-btn" onclick="clearAll()">Clear Everything</button>
+</div>
+
+<script>
+    // Array to store data
+    let dataList = [];
+
+    // Function to add data to the list
+    function addData() {
+        const dataInput = document.getElementById('data-input').value;
+        if (dataInput) {
+            // Split input by commas or newlines, trim spaces, and remove duplicates
+            const dataItems = dataInput.split(/[\\n,]+/).map(item => item.trim()).filter(item => item !== '');
+            dataItems.forEach(item => {
+                if (!dataList.includes(item)) {
+                    dataList.push(item);
+                }
+            });
+
+            document.getElementById('data-input').value = ''; // Clear the input field
+            updateCheckboxList();
+        }
+    }
+
+    // Function to update the checkbox list in the third column
+    function updateCheckboxList() {
+        const checkboxListElement = document.getElementById('checkbox-list');
+        checkboxListElement.innerHTML = '';
+
+        dataList.forEach(data => {
+            const container = document.createElement('div');
+            container.className = 'checkbox-container';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `checkbox-${data}`;
+            checkbox.disabled = true; // Disable checkboxes for manual interaction
+
+            const label = document.createElement('label');
+            label.htmlFor = `checkbox-${data}`;
+            label.textContent = data;
+
+            container.appendChild(checkbox);
+            container.appendChild(label);
+            checkboxListElement.appendChild(container);
+        });
+    }
+
+    // Function to search for data
+    function searchData() {
+        const searchInput = document.getElementById('search-input').value;
+        if (searchInput) {
+            const checkbox = document.getElementById(`checkbox-${searchInput}`);
+            if (checkbox) {
+                checkbox.checked = true; // Check the box if the search term matches
+            }
+           document.getElementById('search-input').value = '';
+        }
+    }
+
+    // Function to clear all inputs and results
+    function clearAll() {
+        document.getElementById('data-input').value = '';
+        document.getElementById('search-input').value = '';
+        dataList = [];
+        updateCheckboxList();
+    }
+  
+  function checkEnter(event) {
+        if (event.key === 'Enter') {
+            if (event.target.id === 'data-input') {
+                addData();
+            } else if (event.target.id === 'search-input') {
+                searchData();
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
