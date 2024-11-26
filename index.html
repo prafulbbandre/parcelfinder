@@ -131,21 +131,25 @@
     let dataList = [];
 
     // Function to add data to the list
-    function addData() {
-        const dataInput = document.getElementById('data-input').value;
-        if (dataInput) {
-            // Split input by commas or newlines, trim spaces, and remove duplicates
-            const dataItems = dataInput.split(/[\\n,]+/).map(item => item.trim()).filter(item => item !== '');
-            dataItems.forEach(item => {
-                if (!dataList.includes(item)) {
-                    dataList.push(item);
-                }
-            });
+   function addData() {
+    const dataInput = document.getElementById('data-input').value;
+    if (dataInput) {
+        // Split input by commas, newlines, and spaces, trim spaces, and remove duplicates
+        const dataItems = dataInput
+            .split(/[\s,]+/) // Matches any combination of spaces, commas, or newlines
+            .map(item => item.trim())
+            .filter(item => item !== ''); // Remove empty entries
 
-            document.getElementById('data-input').value = ''; // Clear the input field
-            updateCheckboxList();
-        }
+        dataItems.forEach(item => {
+            if (!dataList.includes(item)) {
+                dataList.push(item); // Add unique items to the list
+            }
+        });
+
+        document.getElementById('data-input').value = ''; // Clear the input field
+        updateCheckboxList();
     }
+}
 
     // Function to update the checkbox list in the third column
     function updateCheckboxList() {
